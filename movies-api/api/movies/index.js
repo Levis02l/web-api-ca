@@ -3,6 +3,7 @@ import asyncHandler from 'express-async-handler';
 import express from 'express';
 import {
     getGenres,
+    getPopularMovies,
     getUpcomingMovies
   } from '../tmdb-api';
   
@@ -30,6 +31,20 @@ router.get('/', asyncHandler(async (req, res) => {
     res.status(200).json(returnObject);
 }));
 
+// Search movies by title （MongoDB)
+router.get('/search', asyncHandler(async (req, res) => {
+    const { title } = req.query;
+    if (!title) {
+        return res.status(400).json({ message: 'Title query parameter is required.' });
+    }
+
+    const movies = await movieModel.findByTitle(title); 
+    if (movies.length > 0) {
+        res.status(200).json(movies);
+    } else {
+        res.status(404).json({ message: 'No movies found with the given title.' });
+    }
+}));
 
 // Get movie details
 router.get('/:id', asyncHandler(async (req, res) => {
@@ -42,6 +57,8 @@ router.get('/:id', asyncHandler(async (req, res) => {
     }
 }));
 
+
+
 router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
     const upcomingMovies = await getUpcomingMovies();
     res.status(200).json(upcomingMovies);
@@ -50,6 +67,11 @@ router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
 router.get('/tmdb/genres', asyncHandler(async (req, res) => {
     const genres = await getGenres();
     res.status(200).json(genres);
+}));
+
+router.get('/tmdb/popular', asyncHandler(async (req, res) => {
+    const popularMovies = await getPopularMovies();
+    res.status(200).json(popularMovies);
 }));
 
 
