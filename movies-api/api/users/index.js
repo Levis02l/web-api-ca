@@ -2,6 +2,7 @@ import express from 'express';
 import User from './userModel';
 import jwt from 'jsonwebtoken';
 import asyncHandler from 'express-async-handler';
+import Favourite from './favouriteModel';
 
 const router = express.Router(); // eslint-disable-line
 
@@ -42,6 +43,46 @@ router.put('/:id', async (req, res) => {
         res.status(404).json({ code: 404, msg: 'Unable to Update User' });
     }
 });
+
+//Add movies to user favourites
+router.post('/:id/favourite', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { movieId } = req.body;
+
+    if (!movieId) {
+        return res.status(400).json({ message: 'Movie ID is required.' });
+    }
+
+    try {
+        const favourite = await Favourite.create({ userId: id, movieId });
+        res.status(201).json({ success: true, data: favourite });
+    } catch (error) {
+        if (error.code === 11000) {
+            res.status(409).json({ message: 'Movie is already in the favourites list.' });
+        } else {
+            res.status(500).json({ message: 'Internal server error.', error });
+        }
+    }
+}));
+
+//Fetch user favourites
+router.get('/:id/favourites', asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const favourites = await Favourite.find({ userId: id }).populate('movieId');
+    res.status(200).json({ success: true, data: favourites });
+}));
+
+//Remove movies from favourites
+router.delete('/:id/favourite/:movieId', asyncHandler(async (req, res) => {
+    const { id, movieId } = req.params;
+    const result = await Favourite.findOneAndDelete({ userId: id, movieId });
+    if (result) {
+        res.status(200).json({ success: true, message: 'Movie removed from favourites.' });
+    } else {
+        res.status(404).json({ message: 'Movie not found in favourites.' });
+    }
+}));
+
 
 async function registerUser(req, res) {
     // Add input validation logic here
