@@ -1,36 +1,35 @@
-export const getMovies = (page = 1) => {
-  return fetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&include_adult=false&include_video=false&page=${page}`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
+export const getMovies = async (page = 1) => {
+  const response = await fetch(`http://localhost:8080/api/movies/tmdb/discover?page=${page}`, {
+    headers: {
+      'Authorization': window.localStorage.getItem('token')
     }
-    return response.json();
-  })
-    .catch((error) => {
-      throw error
-    });
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("Response Error:", error);
+    throw new Error(error);
+  }
+
+  return await response.json();
 };
 
-export const getMovie = (args) => {
-  //console.log(args)
-  const [, idPart] = args.queryKey;
+export const getMovie = async (args) => {
+  const [, idPart] = args.queryKey; 
   const { id } = idPart;
-  return fetch(
-    `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.REACT_APP_TMDB_KEY}`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
+  const response = await fetch(`http://localhost:8080/api/movies/tmdb/movie/${id}`, {
+    headers: {
+      'Authorization': window.localStorage.getItem('token')
     }
-    return response.json();
-  })
-    .catch((error) => {
-      throw error
-    });
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("Response Error:", error);
+    throw new Error(error);
+  }
+
+  return await response.json();
 };
 
 export const getGenres = () => {
@@ -213,11 +212,11 @@ export const getMovieVideos = ({ queryKey }) => {
 
 export const login = async (username, password) => {
   const response = await fetch('http://localhost:8080/api/users', {
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      method: 'post',
-      body: JSON.stringify({ username: username, password: password })
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: JSON.stringify({ username: username, password: password })
   });
   return response.json();
 };
@@ -226,11 +225,11 @@ export const login = async (username, password) => {
 
 export const signup = async (username, password) => {
   const response = await fetch('http://localhost:8080/api/users?action=register', {
-      headers: {
-          'Content-Type': 'application/json'
-      },
-      method: 'post',
-      body: JSON.stringify({ username: username, password: password })
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    method: 'post',
+    body: JSON.stringify({ username: username, password: password })
   });
   return response.json();
 };

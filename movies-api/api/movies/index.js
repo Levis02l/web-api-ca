@@ -3,6 +3,8 @@ import asyncHandler from 'express-async-handler';
 import express from 'express';
 import Review from './reviewModel';
 import {
+    getMovies,
+    getMovie,
     getGenres,
     getPopularMovies,
     getUpcomingMovies
@@ -103,6 +105,27 @@ router.post('/:movieId/review', asyncHandler(async (req, res) => {
 
 
 
+router.get('/tmdb/discover', asyncHandler(async (req, res) => {
+    const { page = 1 } = req.query; 
+    try {
+        const movies = await getMovies(page); 
+        res.status(200).json(movies); 
+    } catch (error) {
+        console.error("Error fetching movies:", error.message);
+        res.status(500).json({ message: error.message });
+    }
+}));
+
+router.get('/tmdb/movie/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+        const movie = await getMovie(id);
+        res.status(200).json(movie); 
+    } catch (error) {
+        console.error("Error fetching movie details:", error.message);
+        res.status(500).json({ message: error.message }); 
+    }
+}));
 
 router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
     const upcomingMovies = await getUpcomingMovies();
@@ -118,6 +141,7 @@ router.get('/tmdb/popular', asyncHandler(async (req, res) => {
     const popularMovies = await getPopularMovies();
     res.status(200).json(popularMovies);
 }));
+
 
 
 export default router;
