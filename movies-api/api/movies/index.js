@@ -6,6 +6,8 @@ import {
     getMovies,
     getMovie,
     getGenres,
+    getMovieImages,
+    getMovieReviews,
     getPopularMovies,
     getUpcomingMovies
   } from '../tmdb-api';
@@ -127,16 +129,42 @@ router.get('/tmdb/movie/:id', asyncHandler(async (req, res) => {
     }
 }));
 
+router.get('/tmdb/movie/:id/images', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const images = await getMovieImages(id); 
+      res.status(200).json(images); 
+    } catch (error) {
+      console.error("Error fetching movie images:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+}));
+
+router.get('/tmdb/movie/:id/reviews', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const reviews = await getMovieReviews(id); 
+      res.status(200).json(reviews); 
+    } catch (error) {
+      console.error("Error fetching movie reviews:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
+
 router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
     const upcomingMovies = await getUpcomingMovies();
     res.status(200).json(upcomingMovies);
 }));
 
 router.get('/tmdb/genres', asyncHandler(async (req, res) => {
-    const genres = await getGenres();
-    res.status(200).json(genres);
-}));
-
+    try {
+      const genres = await getGenres(); 
+      res.status(200).json(genres); 
+    } catch (error) {
+      console.error("Error fetching genres:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
 router.get('/tmdb/popular', asyncHandler(async (req, res) => {
     const popularMovies = await getPopularMovies();
     res.status(200).json(popularMovies);
