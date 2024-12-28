@@ -42,8 +42,12 @@ const AuthContextProvider = (props) => {
   };
 
   const signout = () => {
-    setTimeout(() => setIsAuthenticated(false), 100);
-  }
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+    setIsAuthenticated(false);
+    setAuthToken(null);
+    setUserName("");
+  };
 
   return (
     <AuthContext.Provider

@@ -11,12 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import { useTheme } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { MoviesContext } from "../../contexts/moviesContext";
-import Avatar from "@mui/material/Avatar";
+import { AuthContext } from "../../contexts/authContext"; // 引入 AuthContext
 
 const Offset = styled('div')(({ theme }) => theme.mixins.toolbar);
 
-const SiteHeader = ({ history }) => {
+const SiteHeader = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -25,8 +24,7 @@ const SiteHeader = ({ history }) => {
 
   const navigate = useNavigate();
 
-  const { user, login, logout } = useContext(MoviesContext);
-
+  const { isAuthenticated, signout, userName } = useContext(AuthContext);
   const menuOptions = [
     { label: "Home", path: "/" },
     { label: "Favorites", path: "/movies/favorites" },
@@ -43,6 +41,11 @@ const SiteHeader = ({ history }) => {
     setAnchorEl(event.currentTarget);
   };
 
+  const handleSignOut = () => {
+    signout();
+    navigate("/");
+  };
+
   return (
     <>
       <AppBar position="fixed" color="secondary">
@@ -53,58 +56,42 @@ const SiteHeader = ({ history }) => {
           <Typography variant="h6" sx={{ flexGrow: 1 }}>
             All you ever wanted to know about Movies!
           </Typography>
-          {isMobile ? (
+          {menuOptions.map((opt) => (
+            <Button
+              key={opt.label}
+              color="inherit"
+              onClick={() => handleMenuSelect(opt.path)}
+            >
+              {opt.label}
+            </Button>
+          ))}
+          {isAuthenticated && (
             <>
-              <IconButton
-                aria-label="menu"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
+              <Typography
+                variant="body1"
+                sx={{
+                  marginLeft: "auto",
+                  marginRight: 2,
+                  color: "white",
+                  fontWeight: "bold",
+                }}
+              >
+                Welcome, {userName}!
+              </Typography>
+              <Button
                 color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorEl}
-                anchorOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
+                onClick={handleSignOut}
+                sx={{
+                  color: "white",
+                  fontWeight: "bold",
                 }}
-                keepMounted
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-                open={open}
-                onClose={() => setAnchorEl(null)}
               >
-                {menuOptions.map((opt) => (
-                  <MenuItem
-                    key={opt.label}
-                    onClick={() => handleMenuSelect(opt.path)}
-                  >
-                    {opt.label}
-                  </MenuItem>
-                ))}
-              </Menu>
-            </>
-          ) : (
-            <>
-              {menuOptions.map((opt) => (
-                <Button
-                  key={opt.label}
-                  color="inherit"
-                  onClick={() => handleMenuSelect(opt.path)}
-                >
-                  {opt.label}
-                </Button>
-              ))}
+                Sign Out
+              </Button>
             </>
           )}
-
-          
         </Toolbar>
+
       </AppBar>
       <Offset />
     </>

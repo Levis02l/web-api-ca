@@ -1,6 +1,6 @@
 # Assignment 2 - Web API.
 
-Name: Your Name
+Haiqing Ji 20109223
 
 ## Features.
 
