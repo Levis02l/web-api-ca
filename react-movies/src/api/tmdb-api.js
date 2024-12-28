@@ -272,8 +272,6 @@ export const login = async (username, password) => {
   return response.json();
 };
 
-
-
 export const signup = async (username, password) => {
   const response = await fetch('http://localhost:8080/api/users?action=register', {
     headers: {
@@ -283,6 +281,67 @@ export const signup = async (username, password) => {
     body: JSON.stringify({ username: username, password: password })
   });
   return response.json();
+};
+
+export const getFavourites = async () => {
+  const userId = window.localStorage.getItem('userId'); 
+  if (!userId) throw new Error('User ID is not set');
+  
+  const response = await fetch(`http://localhost:8080/api/users/${userId}/favourites`, {
+    headers: {
+      'Authorization': window.localStorage.getItem('token')
+    }
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("Response Error:", error);
+    throw new Error(error);
+  }
+
+  return await response.json();
+};
+
+export const addFavourite = async (movieId) => {
+  const userId = window.localStorage.getItem('userId'); 
+  if (!userId) throw new Error('User ID is not set');
+  
+  const response = await fetch(`http://localhost:8080/api/users/${userId}/favourite`, {
+    headers: {
+      'Authorization': window.localStorage.getItem('token'),
+      'Content-Type': 'application/json'
+    },
+    method: 'POST',
+    body: JSON.stringify({ movieId })
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("Response Error:", error);
+    throw new Error(error);
+  }
+
+  return await response.json();
+};
+
+export const removeFavourite = async (movieId) => {
+  const userId = window.localStorage.getItem('userId'); 
+  if (!userId) throw new Error('User ID is not set');
+  
+  const response = await fetch(`http://localhost:8080/api/users/${userId}/favourite/${movieId}`, {
+    headers: {
+      'Authorization': window.localStorage.getItem('token'),
+    },
+    method: 'DELETE'
+  });
+
+  if (!response.ok) {
+    const error = await response.text();
+    console.error("Response Error:", error);
+    throw new Error(error);
+  }
+
+  return await response.json();
 };
 
 

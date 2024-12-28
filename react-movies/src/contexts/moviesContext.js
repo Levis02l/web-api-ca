@@ -1,30 +1,32 @@
 import React, { useState } from "react";
 import { signInWithPopup,signOut, auth, provider } from "../firebase";
+import {  addFavourite, removeFavourite } from '../api/tmdb-api';
 
 export const MoviesContext = React.createContext(null);
 
 const MoviesContextProvider = (props) => {
+
   const [favorites, setFavorites] = useState( [] )
   const [myReviews, setMyReviews] = useState( {} ) 
   const [mustWatch, setMustWatch] = useState([])
   const [user, setUser] = useState(null);
 
-  const addToFavorites = (movie) => {
-    let newFavorites = [];
-    if (!favorites.includes(movie.id)){
-      newFavorites = [...favorites, movie.id];
+  const addToFavorites = async (movie) => {
+    try {
+      await addFavourite(movie.id);
+      setFavorites(prevFavourites => [...prevFavourites, movie.id]);
+    } catch (error) {
+      console.error("Error adding to favourites:", error);
     }
-    else{
-      newFavorites = [...favorites];
-    }
-    setFavorites(newFavorites)
   };
   
-  // We will use this function in the next step
-  const removeFromFavorites = (movie) => {
-    setFavorites( favorites.filter(
-      (mId) => mId !== movie.id
-    ) )
+  const removeFromFavorites = async (movie) => {
+    try {
+      await removeFavourite(movie.id);
+      setFavorites(prevFavourites => prevFavourites.filter(id => id !== movie.id));
+    } catch (error) {
+      console.error("Error removing from favourites:", error);
+    }
   };
 
   const addReview = (movie, review) => {
@@ -70,6 +72,7 @@ const MoviesContextProvider = (props) => {
         favorites,
         mustWatch,
         user,
+        setFavorites,
         addToFavorites,
         removeFromFavorites,
         addReview,

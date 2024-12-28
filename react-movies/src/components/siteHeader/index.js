@@ -103,50 +103,7 @@ const SiteHeader = ({ history }) => {
             </>
           )}
 
-          {user ? (
-            <>
-              <IconButton
-                onClick={(event) => setAnchorEl(event.currentTarget)}
-                sx={{ ml: 2 }}
-              >
-                <Avatar alt={user.displayName} src={user.photoURL}>
-                  {user.displayName?.charAt(0)}
-                </Avatar>
-              </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={() => setAnchorEl(null)}
-                anchorOrigin={{
-                  vertical: "bottom",
-                  horizontal: "right",
-                }}
-                transformOrigin={{
-                  vertical: "top",
-                  horizontal: "right",
-                }}
-              >
-                <MenuItem
-                  onClick={() => {
-                    logout();
-                    setAnchorEl(null);
-                  }}
-                >
-                  Logout
-                </MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <>
-              <Button
-                color="inherit"
-                onClick={login}
-                sx={{ ml: 2 }}
-              >
-                Login
-              </Button>
-            </>
-          )}
+          
         </Toolbar>
       </AppBar>
       <Offset />

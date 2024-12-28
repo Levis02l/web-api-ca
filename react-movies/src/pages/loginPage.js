@@ -2,9 +2,12 @@ import React, { useContext, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { AuthContext } from '../contexts/authContext';
 import { Link } from "react-router-dom";
+import { MoviesContext } from "../contexts/moviesContext";
+import { getFavourites } from "../api/tmdb-api";
 
 const LoginPage = props => {
     const context = useContext(AuthContext);
+    const { setFavorites } = useContext(MoviesContext);
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
@@ -14,13 +17,25 @@ const LoginPage = props => {
     };
 
     let location = useLocation();
-
+    if (context.isAuthenticated) {
+        (async () => {
+            try {
+                const result = await getFavourites();
+                console.log("Fetched favourites:", result);
+                setFavorites(result.data.map(fav => fav.movieId));
+            } catch (error) {
+                console.error("Error fetching favorites:", error);
+            }
+        })(); 
+    }
+    
     // Set 'from' to path where browser is redirected after a successful login - either / or the protected path user requested
     const { from } = location.state ? { from: location.state.from.pathname } : { from: "/homepage" };
 
     if (context.isAuthenticated === true) {
         return <Navigate to={from} />;
     }
+
 
     return (
         <>
