@@ -16,12 +16,22 @@ const AuthContextProvider = (props) => {
   }
 
   const authenticate = async (username, password) => {
-    const result = await login(username, password);
-    if (result.token && result.userId) {
-      setToken(result.token)
-      setIsAuthenticated(true);
-      setUserName(username);
-      localStorage.setItem("userId", result.userId);
+    try {
+      const result = await login(username, password);
+      if (result.token && result.userId) {
+        setToken(result.token);
+        setIsAuthenticated(true);
+        setUserName(username);
+        localStorage.setItem("userId", result.userId);
+      }else if (result.msg) {
+        throw new Error(result.msg); 
+      }
+    } catch (error) {
+      setIsAuthenticated(false);
+      const errorMessage = error.response
+        ? await error.response.text()
+        : error.message || "Login failed.";
+      throw new Error(errorMessage);
     }
   };
 
