@@ -9,7 +9,12 @@ import {
     getMovieImages,
     getMovieReviews,
     getPopularMovies,
-    getUpComingMovies
+    getUpComingMovies,
+    getRecommendations,
+    getMovieCredits,
+    getCreditDetails,
+    getCreditMovies,
+    getMovieVideos
 } from '../tmdb-api';
 
 
@@ -174,7 +179,7 @@ router.get('/tmdb/genres', asyncHandler(async (req, res) => {
 
 router.get('/tmdb/popular', asyncHandler(async (req, res) => {
     const { page = 1 } = req.query; 
-    try {
+    try { 
         const movies = await getPopularMovies(page); 
         res.status(200).json(movies); 
     } catch (error) {
@@ -183,6 +188,59 @@ router.get('/tmdb/popular', asyncHandler(async (req, res) => {
     }
 }));
 
+router.get('/tmdb/movie/:id/recommendations', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const recommendations = await getRecommendations(id); 
+      res.status(200).json(recommendations); 
+    } catch (error) {
+      console.error("Error fetching recommendations:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
 
+  router.get('/tmdb/movie/:id/credits', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const credits = await getMovieCredits(id); 
+      res.status(200).json(credits); 
+    } catch (error) {
+      console.error("Error fetching movie credits:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
+
+  router.get('/tmdb/person/:id', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const creditDetails = await getCreditDetails(id); 
+      res.status(200).json(creditDetails); 
+    } catch (error) {
+      console.error("Error fetching credit details:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
+
+  router.get('/tmdb/person/:id/movie_credits', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const creditMovies = await getCreditMovies(id); 
+      res.status(200).json(creditMovies); 
+    } catch (error) {
+      console.error("Error fetching credit movies:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
+
+  router.get('/tmdb/movie/:id/videos', asyncHandler(async (req, res) => {
+    const { id } = req.params; 
+    try {
+      const videos = await getMovieVideos(id); 
+      res.status(200).json(videos); 
+    } catch (error) {
+      console.error("Error fetching movie videos:", error.message);
+      res.status(500).json({ message: error.message }); 
+    }
+  }));
 
 export default router;

@@ -123,5 +123,97 @@ export const getPopularMovies = async (page = 1) => {
   }
 };
 
+export const getRecommendations = async (id) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}/recommendations?api_key=${process.env.TMDB_KEY}&language=en-US&page=1`
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching recommendations:", error.message);
+    throw error;
+  }
+};
+
+export const getMovieCredits = async (id) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}/credits?api_key=${process.env.TMDB_KEY}&page=1`
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching movie credits:", error.message);
+    throw error;
+  }
+};
+
+export const getCreditDetails = async (id) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/person/${id}?api_key=${process.env.TMDB_KEY}&language=en-US`
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching credit details:", error.message);
+    throw error;
+  }
+};
+
+export const getCreditMovies = async (id) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/person/${id}/movie_credits?api_key=${process.env.TMDB_KEY}&language=en-US`
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching credit movies:", error.message);
+    throw error;
+  }
+};
+
+export const getMovieVideos = async (id) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/${id}/videos?language=en-US&api_key=${process.env.TMDB_KEY}`
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching movie videos:", error.message);
+    throw error;
+  }
+};
+
+
+
 
 
