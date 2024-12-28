@@ -87,36 +87,41 @@ export const getMovieReviews = async (id) => {
   }
 };
 
-export const getUpcomingMovies = async () => {
-    try {
-        const response = await fetch(
-            `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.TMDB_KEY}&language=en-US&page=1`
-        );
+export const getUpComingMovies = async (page = 1) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.TMDB_KEY}&language=en-US&page=${page}`
+    );
 
-        if (!response.ok) {
-            throw new Error(response.json().message);
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching upcoming movies:", error.message);
+    throw error;
+  }
 };
 
-export const getPopularMovies = async () => {
-    try {
-        const response = await fetch(
-            `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_KEY}&language=en-US&page=1`
-        );
+export const getPopularMovies = async (page = 1) => {
+  try {
+    const response = await fetch(
+      `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.TMDB_KEY}&language=en-US&page=${page}`
+    );
 
-        if (!response.ok) {
-            throw new Error(response.json().message);
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.status_message || "Something went wrong");
     }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching popular movies:", error.message);
+    throw error;
+  }
 };
+
 
 

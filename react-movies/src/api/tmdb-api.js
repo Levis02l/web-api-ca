@@ -98,38 +98,47 @@ export const getMovieReviews = async (args) => {
   }
 };
 
-export const getUpComingMovies = (page = 1) => {
-  return fetch(
-    `https://api.themoviedb.org/3/movie/upcoming?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
-    }
-    return response.json();
-  })
-    .catch((error) => {
-      throw error
+export const getUpComingMovies = async (page = 1) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/movies/tmdb/upcoming?page=${page}`, {
+      headers: {
+        'Authorization': window.localStorage.getItem('token'), 
+      },
     });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Response Error:", error);
+      throw new Error(error);
+    }
+
+    return await response.json(); 
+  } catch (error) {
+    console.error("Error fetching upcoming movies:", error.message);
+    throw error;
+  }
 };
 
-export const getPopularMovies = (page = 1) => {
-  return fetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${process.env.REACT_APP_TMDB_KEY}&language=en-US&page=${page}`
-  ).then((response) => {
-    if (!response.ok) {
-      return response.json().then((error) => {
-        throw new Error(error.status_message || "Something went wrong");
-      });
-    }
-    return response.json();
-  })
-    .catch((error) => {
-      throw error
+export const getPopularMovies = async (page = 1) => {
+  try {
+    const response = await fetch(`http://localhost:8080/api/movies/tmdb/popular?page=${page}`, {
+      headers: {
+        'Authorization': window.localStorage.getItem('token'), 
+      },
     });
-};
 
+    if (!response.ok) {
+      const error = await response.text();
+      console.error("Response Error:", error);
+      throw new Error(error);
+    }
+
+    return await response.json(); 
+  } catch (error) {
+    console.error("Error fetching popular movies:", error.message);
+    throw error;
+  }
+};
 
 export const getRecommendations = (args) => {
   //console.log(args)
